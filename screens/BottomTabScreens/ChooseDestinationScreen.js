@@ -9,6 +9,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import { Responsive } from "../../constants/ResponsiveFunc";
 import HeaderComp from "../../component/HeaderComp";
 import ImagePath from "../../constants/ImagePath";
+import TopTabButton from "../../component/TopTabButton";
 
 const TabButtonData = [
     { iconType: "ionicon",iconName: "bus",iconSize: 25,inactiveColor: Color.black, activeColor: Color.lightGreen},
@@ -21,43 +22,63 @@ const TabButtonData = [
 
 const Ticket = props =>{
     return(
-        <View style={styles.mainTicketContainer} >
-            {/* <View style={styles.ticketFlexBox1} >
-
-            </View>
-
-            <View style={styles.ticketFlexBox2} >
-                
-            </View> */}
+        <View style={{...styles.mainTicketContainer,...props.mainTicketContainer}} >
             <View style={{flex:1}} >
-            <View style={{
-                height: Responsive(30), 
-                width: Responsive(30), 
-                backgroundColor: Color.ashColor,
-                borderRadius: Responsive(15),
-                //position: 'absolute',
-                marginTop: Responsive(-15),
-                alignSelf: 'center',
-                left: Responsive(40),
-                }} 
-            />
+            <View style={{...styles.circleStyle,...props.circleStyle}} />
             </View>
 
-            <View style={{flex:8}} >
-
+            <View style={{...styles.ticketMidViewStyle,...props.ticketMidViewStyle}} >
+                <View style={{flex:1}} >
+                    <Text style={{color:Color.black,fontFamily:FontNames.MontserratBold,fontSize: 14}} >Ansett Pioneer</Text>
+                    <View style={{}} >
+                        <View style={{flexDirection:'row',alignItems:'center',marginTop: Responsive(20)}}>
+                            <View style={{
+                                backgroundColor: '#4BCB9E',
+                                height:Responsive(25),
+                                width:Responsive(25),
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: Responsive(5)
+                                }} >
+                            <Icon size={12} type="feather" name="send" color={Color.black} />
+                            </View>
+                            <View style={{paddingLeft: Responsive(10)}} >
+                               <Text style={{color:Color.black,fontFamily:FontNames.MontserratSemiBold,fontSize: 12}} >Dhaka</Text>
+                               <Text style={{color:Color.black,fontFamily:FontNames.MontserratRegular,fontSize: 8}} >13-Dec-2022</Text>
+                            </View>
+                        </View>
+                        <View style={{flexDirection:'row',marginTop: Responsive(20)}} >
+                            <View style={{
+                                backgroundColor: '#DA7657',
+                                height:Responsive(25),
+                                width:Responsive(25),
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: Responsive(5)
+                                }} >
+                            <Icon size={12} type="ionicon" name="location-outline" color={Color.black} />
+                            </View>
+                            <View style={{paddingLeft: Responsive(10)}} >
+                               <Text style={{color:Color.black,fontFamily:FontNames.MontserratSemiBold,fontSize: 12}} >Cumilla</Text>
+                               <Text style={{color:Color.black,fontFamily:FontNames.MontserratRegular,fontSize: 8}} >13-Dec-2022</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+                <View style={{flex: 1,alignItems:'flex-end'}} >
+                     <Text style={{color:Color.black,fontFamily:FontNames.MontserratBold,fontSize: 15}} >9:00 AM</Text>
+                     <View style={{height: 20,width: 80,backgroundColor:Color.lightGreen,alignItems:'center',justifyContent:'center',borderRadius:3,marginTop:25}} >
+                        <Text style={{color:Color.appBackgroundColor,fontFamily:FontNames.MontserratBold,fontSize: 10}} >Buy Ticket</Text>
+                     </View>
+                     <View style={{flexDirection: 'row',alignItems:'center',marginTop:25}} >
+                     <Text style={{color:Color.black,fontFamily:FontNames.MontserratSemiBold,fontSize: 10}} >Price: </Text>
+                     <Text style={{color:"red",fontFamily:FontNames.MontserratSemiBold,fontSize: 15}} >$20</Text>
+                     </View>
+                </View>
             </View>
 
-            <View style={{flex:1,backgroundColor:Color.appBackgroundColor}} >
-            <View style={{
-                height: Responsive(30), 
-                width: Responsive(30), 
-                backgroundColor: Color.ashColor,
-                borderRadius: Responsive(15),
-                //position: 'absolute',
-                alignSelf: 'center',
-                left: Responsive(40),
-                }} 
-            />
+            <View style={{flex:1}} >
+            <View style={{...styles.circleStyle, marginTop: -3,...props.circle2Style}} />
             </View>
         </View>
     )
@@ -72,29 +93,9 @@ const ChooseDestinationScreen = (props) =>{
         "sail-boat": false
     }
     const [active,setActive] = useState({...initialState});
-    const TopTabButton = props => {
-        /* 
-        required props:
-        iconType
-        iconName
-        iconSize
-        iconColor
-        */
-        return (
-            <TouchableOpacity 
-               style={{...styles.TopTabButtonMainView}}
-               activeOpacity = {0.7}
-               onPress = {() => setActive({...initialState,[props.iconName]: true}) }
-               key={props.index}
-            >
-                <Icon 
-                  type={props.iconType} 
-                  name={props.iconName} 
-                  size={props.iconSize} 
-                  color={active[props.iconName] ? props.activeColor : props.inactiveColor} 
-                />
-            </TouchableOpacity>
-        )
+
+    const topTabButtonPressHandler = (btnInfo) =>{
+        setActive({...initialState,[btnInfo.iconName]: true})
     }
     
     return(
@@ -120,12 +121,10 @@ const ChooseDestinationScreen = (props) =>{
                 TabButtonData.map((item,index) => {
                     return(
                         <TopTabButton 
-                            iconType= {item.iconType}
-                            iconName= {item.iconName}
-                            iconSize= {item.iconSize}
-                            index = {index}
-                            activeColor = {item.activeColor}
-                            inactiveColor = {item.inactiveColor}
+                            key={index}
+                            item = {item}
+                            buttonPressHandler = {topTabButtonPressHandler.bind(this,{iconName: item.iconName})}
+                            active = {active}
                         />
                     )
                 })
@@ -169,19 +168,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-evenly',
     },
-    TopTabButtonMainView:{
-        backgroundColor: Color.appBackgroundColor,
-        shadowColor: 'black',
-        shadowOpacity: 0.26,
-        shadowOffset: {width:0,height:2},
-        shadowRadius: 8,
-        elevation: 5,
-        height: Responsive(40),
-        width: Responsive(40),
-        alignItems:'center',
-        justifyContent: 'center',
-        borderRadius: 8,
-    },
     mainTicketContainer:{
         backgroundColor: Color.appBackgroundColor,
         shadowColor: 'black',
@@ -194,11 +180,20 @@ const styles = StyleSheet.create({
         borderRadius: Responsive(5),
         //overflow: 'hidden'
     },
-    ticketFlexBox1:{
-
+    circleStyle:{
+        height: Responsive(30), 
+        width: Responsive(30), 
+        backgroundColor: Color.ashColor,
+        borderRadius: Responsive(15),
+        //position: 'absolute',
+        marginTop: Responsive(-15),
+        alignSelf: 'center',
+        left: Responsive(40),
     },
-    ticketFlexBox2:{
-
+    ticketMidViewStyle:{
+        flex: 8,
+        flexDirection: 'row',
+        padding: Responsive(10)
     }
 })
 
